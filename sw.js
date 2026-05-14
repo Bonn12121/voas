@@ -5,7 +5,7 @@ const ASSETS = [
   './dictionaries/en.js',
   './dictionaries/vi.js',
   './manifest.json',
-  'voas_logo_1778766462046.png'
+  'icon.png'
 ];
 
 self.addEventListener('install', (event) => {
