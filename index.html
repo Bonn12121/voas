@@ -167,6 +167,74 @@
             background: rgba(239, 68, 68, 0.1);
         }
 
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid #333;
+            border-radius: 20px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: var(--secondary);
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .modal-title {
+            color: var(--accent);
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .modal-list {
+            list-style: none;
+            text-align: left;
+        }
+
+        .modal-list li {
+            color: var(--secondary);
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .modal-list li::before {
+            content: "•";
+            color: var(--accent);
+            font-weight: bold;
+        }
+
         /* Game Header */
         .header {
             display: flex;
@@ -424,16 +492,6 @@
                 <button class="btn super-hard" onclick="startGame('medium', true)">Medium (Kinda Smart)</button>
                 <button class="btn super-hard" onclick="startGame('hard', true)">Hard (Smarter Bot)</button>
             </div>
-
-            <div
-                style="margin-top: 2rem; padding: 1rem; background: var(--surface); border-radius: 8px; border: 1px solid #333; width: 100%; max-width: 300px; text-align: left;">
-                <h3 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--accent);">What's New:</h3>
-                <ul style="font-size: 0.8rem; color: var(--secondary); margin-left: 1.2rem; line-height: 1.5;">
-                    <li>Bug fixes</li>
-                    <li>IMPOSSIBLE mode added</li>
-                    <li>Bot difficulty adjusted</li>
-                </ul>
-            </div>
         </div>
 
         <!-- RPS Screen -->
@@ -495,6 +553,7 @@
         let hp = { player: 3, bot: 3 };
         let difficulty = "medium";
         let currentLang = "en";
+        let hasShownWhatsNew = false;
         
         let lastDifficulty = "medium";
         let lastIsImpossible = false;
@@ -1019,9 +1078,18 @@
             setTimeout(() => switchScreen('result'), 1000);
         }
 
+        function toggleWhatsNew(show) {
+            document.getElementById('whats-new-modal').style.display = show ? 'flex' : 'none';
+        }
+
         window.onload = () => {
             updatePlayerInfo();
             loadDictionary('en');
+            
+            if (!hasShownWhatsNew) {
+                setTimeout(() => toggleWhatsNew(true), 1000);
+                hasShownWhatsNew = true;
+            }
             
             // Service Worker Registration for PWA
             if ('serviceWorker' in navigator) {
@@ -1034,6 +1102,21 @@
         };
 
     </script>
+
+    <div id="whats-new-modal" class="modal-overlay" onclick="toggleWhatsNew(false)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-close" onclick="toggleWhatsNew(false)">&times;</div>
+            <div class="modal-title">What's New in v2.0</div>
+            <ul class="modal-list">
+                <li><strong>iOS PWA Support:</strong> "Add to Home Screen" for a native experience.</li>
+                <li><strong>Pro Mobile UI:</strong> Glassmorphism and safe-area optimization.</li>
+                <li><strong>Fixed Vietnamese:</strong> Cleaner wordlist with 5,501 real words.</li>
+                <li><strong>RPS Turn Flip:</strong> Loser of Rock-Paper-Scissors now goes first.</li>
+                <li><strong>Restart Choice:</strong> Instant restart from the game-over screen.</li>
+                <li><strong>Bug Fixes:</strong> Optimized word matching and UI scaling.</li>
+            </ul>
+        </div>
+    </div>
 
     <div
         style="position: fixed; bottom: 12px; left: 16px; font-size: 0.8rem; color: var(--secondary); pointer-events: none;">
