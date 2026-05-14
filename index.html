@@ -92,16 +92,17 @@
 
         /* Typography */
         h1 {
-            font-size: 4rem;
+            font-size: 3rem;
             font-weight: 800;
-            letter-spacing: -2px;
+            letter-spacing: -1px;
             margin-bottom: 0.5rem;
         }
 
         p {
             color: var(--secondary);
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
+            font-size: 1rem;
+            font-size: 0.95rem;
+            margin-bottom: 1.2rem;
         }
 
         /* Buttons */
@@ -109,16 +110,46 @@
             background: var(--surface);
             color: var(--primary);
             border: 1px solid #333;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            font-size: 1rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             width: 100%;
-            max-width: 300px;
-            margin-bottom: 1rem;
+            max-width: 280px;
+            margin-bottom: 0.6rem;
             font-family: var(--font);
+        }
+
+        .whats-new {
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            width: 100%;
+            max-width: 400px;
+            text-align: left;
+        }
+
+        .whats-new h3 {
+            font-size: 0.9rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .whats-new ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .whats-new li {
+            font-size: 0.8rem;
+            color: var(--secondary);
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
         }
 
         .btn:hover {
@@ -237,38 +268,38 @@
         /* Mobile Version Optimization */
         @media (max-width: 600px) {
             .container {
-                padding: 1.5rem;
+                padding: 1rem;
                 justify-content: space-between;
             }
 
             h1 {
-                font-size: 3.5rem;
-                margin-top: 1rem;
+                font-size: 2.5rem;
+                margin-top: 0.5rem;
             }
 
             p {
-                font-size: 1rem;
+                font-size: 0.9rem;
                 padding: 0;
-                margin-bottom: 3rem;
+                margin-bottom: 2rem;
             }
 
             .syllable-box {
-                font-size: 4rem;
-                margin-bottom: 2rem;
+                font-size: 3rem;
+                margin-bottom: 1.5rem;
                 text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
             }
 
             input[type="text"] {
-                font-size: 2rem;
-                border-bottom-width: 3px;
-                padding-bottom: 1rem;
+                font-size: 1.8rem;
+                border-bottom-width: 2px;
+                padding-bottom: 0.8rem;
             }
 
             .btn {
-                padding: 1.2rem;
-                font-size: 1rem;
-                border-radius: 16px;
-                margin-bottom: 0.8rem;
+                padding: 1rem;
+                font-size: 0.9rem;
+                border-radius: 12px;
+                margin-bottom: 0.6rem;
                 background: rgba(255, 255, 255, 0.05);
                 backdrop-filter: blur(10px);
                 border: 1px solid rgba(255, 255, 255, 0.1);
