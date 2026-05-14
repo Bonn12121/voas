@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Voas - Word Game</title>
     <link rel="manifest" href="manifest.json">
     
@@ -57,9 +57,11 @@
             width: 100%;
             max-width: 600px;
             height: 100vh;
+            height: 100dvh;
             display: flex;
             flex-direction: column;
             padding: 2rem;
+            padding-bottom: 3rem; /* Space for fixed footer */
             position: relative;
         }
 
@@ -1119,11 +1121,11 @@
     </div>
 
     <div
-        style="position: fixed; bottom: 12px; left: 16px; font-size: 0.8rem; color: var(--secondary); pointer-events: none;">
+        style="position: fixed; bottom: env(safe-area-inset-bottom, 12px); left: 16px; font-size: 0.8rem; color: var(--secondary); pointer-events: none; z-index: 100;">
         Credit: Made by hvu 🩷
     </div>
     <div
-        style="position: fixed; bottom: 12px; right: 16px; font-size: 0.8rem; color: var(--secondary); pointer-events: none;">
+        style="position: fixed; bottom: env(safe-area-inset-bottom, 12px); right: 16px; font-size: 0.8rem; color: var(--secondary); pointer-events: none; z-index: 100;">
         Version: 2.0
     </div>
 
