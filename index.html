@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1632996405936990" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -669,13 +670,15 @@
                 </div>
             </div>
 
-            <div class="tabs" style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+            <div class="tabs" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; justify-content: center;">
                 <button onclick="setMode('normal')" id="tab-normal"
-                    style="padding: 0.5rem 1rem; background: var(--surface); color: var(--primary); border: 1px solid var(--accent); border-radius: 8px; cursor: pointer; font-family: var(--font); font-weight: 600; transition: all 0.2s;">NORMAL</button>
+                    style="padding: 0.5rem 1rem; background: var(--surface); color: var(--primary); border: 1px solid var(--accent); border-radius: 8px; cursor: pointer; font-family: var(--font); font-weight: 600; transition: all 0.2s; flex: 1; min-width: 80px;">NORMAL</button>
                 <button onclick="setMode('impossible')" id="tab-impossible"
-                    style="padding: 0.5rem 1rem; background: transparent; color: var(--secondary); border: 1px solid #333; border-radius: 8px; cursor: pointer; font-family: var(--font); font-weight: 600; transition: all 0.2s;">IMPOSSIBLE</button>
+                    style="padding: 0.5rem 1rem; background: transparent; color: var(--secondary); border: 1px solid #333; border-radius: 8px; cursor: pointer; font-family: var(--font); font-weight: 600; transition: all 0.2s; flex: 1; min-width: 80px;">IMPOSSIBLE</button>
                 <button onclick="setMode('topic')" id="tab-topic"
-                    style="padding: 0.5rem 1rem; background: transparent; color: var(--secondary); border: 1px solid #333; border-radius: 8px; cursor: pointer; font-family: var(--font); font-weight: 600; transition: all 0.2s;">TOPIC</button>
+                    style="padding: 0.5rem 1rem; background: transparent; color: var(--secondary); border: 1px solid #333; border-radius: 8px; cursor: pointer; font-family: var(--font); font-weight: 600; transition: all 0.2s; flex: 1; min-width: 80px;">TOPIC</button>
+                <button onclick="setMode('local')" id="tab-local"
+                    style="padding: 0.5rem 1rem; background: transparent; color: var(--secondary); border: 1px solid #333; border-radius: 8px; cursor: pointer; font-family: var(--font); font-weight: 600; transition: all 0.2s; flex: 1; min-width: 80px;">LOCAL MP</button>
             </div>
 
             <div class="lang-tabs" style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
@@ -713,6 +716,15 @@
                     onclick="startGame('medium', false, 'topic')">Medium Topic Mode</button>
                 <button class="btn" style="border-color: var(--topic); color: var(--topic);"
                     onclick="startGame('hard', false, 'topic')">Hard Topic Mode</button>
+            </div>
+
+            <div id="modes-local" style="width: 100%; display: none; flex-direction: column; align-items: center;">
+                <button class="btn" style="border-color: #f59e0b; color: #f59e0b;"
+                    onclick="startLocalGame(2)">2 Players</button>
+                <button class="btn" style="border-color: #f59e0b; color: #f59e0b;"
+                    onclick="startLocalGame(3)">3 Players</button>
+                <button class="btn" style="border-color: #f59e0b; color: #f59e0b;"
+                    onclick="startLocalGame(4)">4 Players</button>
             </div>
         </div>
 
@@ -802,6 +814,17 @@
         let streak = parseInt(localStorage.getItem('voas_streak')) || 0;
         let currentMode = "normal";
         let currentTopic = null;
+
+        let isLocalMP = false;
+        let numLocalPlayers = 0;
+        let localPlayersHp = [];
+        let localCurrentPlayer = 0;
+        let localAliveCount = 0;
+
+        function getPlayerColor(i) {
+            const colors = ['#818cf8', '#f43f5e', '#34d399', '#f59e0b'];
+            return colors[i];
+        }
 
         const topics = {
             animals: {
@@ -988,19 +1011,24 @@
             const tabNormal = document.getElementById('tab-normal');
             const tabImpossible = document.getElementById('tab-impossible');
             const tabTopic = document.getElementById('tab-topic');
+            const tabLocal = document.getElementById('tab-local');
             const modesNormal = document.getElementById('modes-normal');
             const modesImpossible = document.getElementById('modes-impossible');
             const modesTopic = document.getElementById('modes-topic');
+            const modesLocal = document.getElementById('modes-local');
 
             // Reset all
-            [tabNormal, tabImpossible, tabTopic].forEach(t => {
-                t.style.background = 'transparent';
-                t.style.color = 'var(--secondary)';
-                t.style.borderColor = '#333';
+            [tabNormal, tabImpossible, tabTopic, tabLocal].forEach(t => {
+                if (t) {
+                    t.style.background = 'transparent';
+                    t.style.color = 'var(--secondary)';
+                    t.style.borderColor = '#333';
+                }
             });
             modesNormal.style.display = 'none';
             modesImpossible.style.display = 'none';
             modesTopic.style.display = 'none';
+            if (modesLocal) modesLocal.style.display = 'none';
 
             if (mode === 'normal') {
                 tabNormal.style.background = 'var(--surface)';
@@ -1017,14 +1045,38 @@
                 tabTopic.style.color = 'var(--topic)';
                 tabTopic.style.borderColor = 'var(--topic)';
                 modesTopic.style.display = 'flex';
+            } else if (mode === 'local') {
+                tabLocal.style.background = 'var(--surface)';
+                tabLocal.style.color = '#f59e0b';
+                tabLocal.style.borderColor = '#f59e0b';
+                modesLocal.style.display = 'flex';
             }
         }
 
         function startGame(diff, isImpossible, mode = 'normal') {
+            isLocalMP = false;
             difficulty = diff;
             lastDifficulty = diff;
             lastIsImpossible = isImpossible;
             currentMode = mode;
+
+            const header = document.querySelector('.header');
+            header.innerHTML = `
+                <div class="player-info">
+                    <div class="name" id="game-player-name">YOU</div>
+                    <div class="hearts" id="player-hp"></div>
+                </div>
+                <div class="player-info">
+                    <div class="name" id="bot-name">BOT</div>
+                    <div class="hearts" id="bot-hp"></div>
+                </div>
+            `;
+            header.style.justifyContent = 'space-between';
+            ui.playerHp = document.getElementById('player-hp');
+            ui.botHp = document.getElementById('bot-hp');
+            ui.botName = document.getElementById('bot-name');
+            const gameName = document.getElementById('game-player-name');
+            if (gameName) gameName.innerText = playerName;
 
             const maxHp = isImpossible ? 1 : 3;
             currentMaxHp = maxHp;
@@ -1051,8 +1103,42 @@
             startRPSPhase();
         }
 
+        function startLocalGame(num) {
+            isLocalMP = true;
+            numLocalPlayers = num;
+            localPlayersHp = new Array(num).fill(3);
+            localCurrentPlayer = 0;
+            localAliveCount = num;
+            currentMaxHp = 3;
+            maxTime = 10;
+            usedWords.clear();
+            ui.usedWords.innerHTML = "Used words: None";
+            document.getElementById('topic-label').style.display = 'none';
+            currentMode = 'local';
+            
+            const header = document.querySelector('.header');
+            header.innerHTML = '';
+            header.style.justifyContent = 'space-around';
+            for (let i = 0; i < num; i++) {
+                header.innerHTML += `
+                    <div class="player-info" id="local-info-${i}" style="transition: transform 0.3s;">
+                        <div class="name" style="color: ${getPlayerColor(i)}; font-weight: 800;">PLAYER ${i + 1}</div>
+                        <div class="hearts" id="local-hp-${i}"></div>
+                    </div>
+                `;
+            }
+            
+            updateLocalHP(false);
+            switchScreen('game');
+            nextLocalRound(0);
+        }
+
         function restartGame() {
-            startGame(lastDifficulty, lastIsImpossible);
+            if (isLocalMP) {
+                startLocalGame(numLocalPlayers);
+            } else {
+                startGame(lastDifficulty, lastIsImpossible, currentMode);
+            }
         }
 
         function startRPSPhase() {
@@ -1146,6 +1232,73 @@
             else if (hp.bot <= 0) endGame(true);
         }
 
+        function updateLocalHP(animated) {
+            for (let i = 0; i < numLocalPlayers; i++) {
+                const hpEl = document.getElementById(`local-hp-${i}`);
+                if (!hpEl) continue;
+                
+                if (animated && i === localCurrentPlayer) {
+                    const activeHearts = hpEl.querySelectorAll('.heart-icon.active');
+                    if (activeHearts.length > 0) {
+                        const lastHeart = activeHearts[activeHearts.length - 1];
+                        lastHeart.classList.remove('active');
+                        lastHeart.classList.add('losing');
+                        setTimeout(() => {
+                            lastHeart.classList.remove('losing');
+                            lastHeart.classList.add('lost');
+                        }, 500);
+                    }
+                } else {
+                    renderHearts(hpEl, localPlayersHp[i], currentMaxHp);
+                }
+                
+                const infoEl = document.getElementById(`local-info-${i}`);
+                if (localPlayersHp[i] <= 0) {
+                    infoEl.style.opacity = '0.3';
+                } else {
+                    infoEl.style.opacity = '1';
+                }
+            }
+            
+            localAliveCount = localPlayersHp.filter(h => h > 0).length;
+            if (animated && localAliveCount <= 1) {
+                setTimeout(endLocalGame, 1000);
+            }
+        }
+
+        function endLocalGame() {
+            clearInterval(timerInterval);
+            let winner = -1;
+            for (let i = 0; i < numLocalPlayers; i++) {
+                if (localPlayersHp[i] > 0) winner = i;
+            }
+            
+            if (winner !== -1) {
+                ui.resultTitle.innerText = `PLAYER ${winner + 1} WON!`;
+                ui.resultTitle.style.color = getPlayerColor(winner);
+                ui.resultDesc.innerText = "All other players ran out of hearts.";
+            } else {
+                ui.resultTitle.innerText = `DRAW!`;
+                ui.resultTitle.style.color = "var(--accent)";
+                ui.resultDesc.innerText = "Everyone died.";
+            }
+            
+            setTimeout(() => switchScreen('result'), 1000);
+        }
+
+        function nextLocalRound(startingPlayer) {
+            localCurrentPlayer = startingPlayer;
+            prepareNextTurn();
+        }
+
+        function advanceLocalTurn() {
+            if (localAliveCount <= 1) return;
+            do {
+                localCurrentPlayer = (localCurrentPlayer + 1) % numLocalPlayers;
+            } while (localPlayersHp[localCurrentPlayer] <= 0);
+            prepareNextTurn();
+        }
+
         function generateSyllable() {
             let valid = false;
             let syllable = "";
@@ -1190,16 +1343,35 @@
             ui.input.style.borderBottomColor = "rgba(255,255,255,0.1)";
             ui.input.classList.remove('shake', 'correct-bounce', 'correct-glow');
 
-            if (turn === 'player') {
+            if (isLocalMP) {
                 ui.input.disabled = false;
                 ui.input.focus();
-                ui.status.innerText = "Your turn! Type a word.";
-                ui.status.style.color = "var(--primary)";
+                ui.status.innerText = `Player ${localCurrentPlayer + 1}'s turn!`;
+                ui.status.style.color = getPlayerColor(localCurrentPlayer);
+                for (let i = 0; i < numLocalPlayers; i++) {
+                    const infoEl = document.getElementById(`local-info-${i}`);
+                    if (infoEl) {
+                        if (i === localCurrentPlayer) {
+                            infoEl.style.transform = 'scale(1.1)';
+                            infoEl.style.textShadow = `0 0 10px ${getPlayerColor(i)}`;
+                        } else {
+                            infoEl.style.transform = 'scale(1)';
+                            infoEl.style.textShadow = 'none';
+                        }
+                    }
+                }
             } else {
-                ui.input.disabled = true;
-                ui.status.innerHTML = '<span class="thinking-dots">Bot is thinking<span>.</span><span>.</span><span>.</span></span>';
-                ui.status.style.color = "var(--secondary)";
-                triggerBotPlay();
+                if (turn === 'player') {
+                    ui.input.disabled = false;
+                    ui.input.focus();
+                    ui.status.innerText = "Your turn! Type a word.";
+                    ui.status.style.color = "var(--primary)";
+                } else {
+                    ui.input.disabled = true;
+                    ui.status.innerHTML = '<span class="thinking-dots">Bot is thinking<span>.</span><span>.</span><span>.</span></span>';
+                    ui.status.style.color = "var(--secondary)";
+                    triggerBotPlay();
+                }
             }
 
             let hasCritical = false;
@@ -1223,30 +1395,47 @@
 
         function failTurn(reason) {
             clearTimeout(botTypingTimeout);
-            if (turn === 'player') {
-                hp.player--;
-                ui.status.innerText = `You lost a heart! (${reason})`;
+            
+            if (isLocalMP) {
+                localPlayersHp[localCurrentPlayer]--;
+                ui.status.innerText = `Player ${localCurrentPlayer + 1} lost a heart! (${reason})`;
                 ui.status.style.color = "var(--error)";
-                // Shake the input on fail
                 ui.input.classList.remove('shake');
                 void ui.input.offsetWidth;
                 ui.input.classList.add('shake');
+                
+                updateLocalHP(true);
+                
+                if (localAliveCount > 1) {
+                    setTimeout(() => advanceLocalTurn(), 1500);
+                }
             } else {
-                hp.bot--;
-                ui.status.innerText = `Bot lost a heart! (${reason})`;
-                ui.status.style.color = "var(--success)";
-            }
-            updateHP(true);
+                if (turn === 'player') {
+                    hp.player--;
+                    ui.status.innerText = `You lost a heart! (${reason})`;
+                    ui.status.style.color = "var(--error)";
+                    ui.input.classList.remove('shake');
+                    void ui.input.offsetWidth;
+                    ui.input.classList.add('shake');
+                } else {
+                    hp.bot--;
+                    ui.status.innerText = `Bot lost a heart! (${reason})`;
+                    ui.status.style.color = "var(--success)";
+                }
+                updateHP(true);
 
-            if (hp.player > 0 && hp.bot > 0) {
-                setTimeout(() => nextRound(turn === 'player' ? 'bot' : 'player'), 1500);
+                if (hp.player > 0 && hp.bot > 0) {
+                    setTimeout(() => nextRound(turn === 'player' ? 'bot' : 'player'), 1500);
+                }
             }
         }
 
         ui.input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && turn === 'player') {
-                const word = ui.input.value.trim().toLowerCase();
-                validateWord(word);
+            if (e.key === 'Enter') {
+                if (isLocalMP || turn === 'player') {
+                    const word = ui.input.value.trim().toLowerCase();
+                    validateWord(word);
+                }
             }
         });
 
@@ -1293,8 +1482,13 @@
             ui.input.classList.add('shake');
             setTimeout(() => {
                 if (timeLeft > 0) {
-                    ui.status.innerText = "Your turn! Type a word.";
-                    ui.status.style.color = "var(--primary)";
+                    if (isLocalMP) {
+                        ui.status.innerText = `Player ${localCurrentPlayer + 1}'s turn!`;
+                        ui.status.style.color = getPlayerColor(localCurrentPlayer);
+                    } else {
+                        ui.status.innerText = "Your turn! Type a word.";
+                        ui.status.style.color = "var(--primary)";
+                    }
                     ui.input.style.borderBottomColor = "rgba(255,255,255,0.1)";
                     ui.input.classList.remove('shake');
                 }
@@ -1318,12 +1512,16 @@
 
             setTimeout(() => {
                 ui.input.classList.remove('correct-bounce', 'correct-glow');
-                turn = turn === 'player' ? 'bot' : 'player';
-                if (currentMode === 'topic') {
-                    ui.input.value = "";
-                    startTurn();
+                if (isLocalMP) {
+                    advanceLocalTurn();
                 } else {
-                    prepareNextTurn();
+                    turn = turn === 'player' ? 'bot' : 'player';
+                    if (currentMode === 'topic') {
+                        ui.input.value = "";
+                        startTurn();
+                    } else {
+                        prepareNextTurn();
+                    }
                 }
             }, 800);
         }
