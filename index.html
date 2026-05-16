@@ -164,6 +164,7 @@
             font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
+            text-align: center;
             transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
             width: 100%;
             max-width: 280px;
@@ -605,7 +606,7 @@
             .lang-tabs button {
                 flex: 1;
                 font-size: 0.8rem !important;
-                padding: 0.8rem !important;
+                padding: 0.8rem 0.2rem !important;
             }
 
             #used-words-display {
@@ -672,13 +673,13 @@
 
             <div class="tabs" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; justify-content: center;">
                 <button onclick="setMode('normal')" id="tab-normal"
-                    style="padding: 0.5rem 1rem; background: var(--surface); color: var(--primary); border: 1px solid var(--accent); border-radius: 8px; cursor: pointer; font-family: var(--font); font-weight: 600; transition: all 0.2s; flex: 1; min-width: 80px;">NORMAL</button>
+                    style="padding: 0.5rem 0.2rem; display: flex; justify-content: center; align-items: center; text-align: center; background: var(--surface); color: var(--primary); border: 1px solid var(--accent); border-radius: 8px; cursor: pointer; font-family: var(--font); font-weight: 600; transition: all 0.2s; flex: 1; min-width: 80px; white-space: nowrap;">NORMAL</button>
                 <button onclick="setMode('impossible')" id="tab-impossible"
-                    style="padding: 0.5rem 1rem; background: transparent; color: var(--secondary); border: 1px solid #333; border-radius: 8px; cursor: pointer; font-family: var(--font); font-weight: 600; transition: all 0.2s; flex: 1; min-width: 80px;">IMPOSSIBLE</button>
+                    style="padding: 0.5rem 0.2rem; display: flex; justify-content: center; align-items: center; text-align: center; background: transparent; color: var(--secondary); border: 1px solid #333; border-radius: 8px; cursor: pointer; font-family: var(--font); font-weight: 600; transition: all 0.2s; flex: 1; min-width: 80px; white-space: nowrap;">IMPOSSIBLE</button>
                 <button onclick="setMode('topic')" id="tab-topic"
-                    style="padding: 0.5rem 1rem; background: transparent; color: var(--secondary); border: 1px solid #333; border-radius: 8px; cursor: pointer; font-family: var(--font); font-weight: 600; transition: all 0.2s; flex: 1; min-width: 80px;">TOPIC</button>
+                    style="padding: 0.5rem 0.2rem; display: flex; justify-content: center; align-items: center; text-align: center; background: transparent; color: var(--secondary); border: 1px solid #333; border-radius: 8px; cursor: pointer; font-family: var(--font); font-weight: 600; transition: all 0.2s; flex: 1; min-width: 80px; white-space: nowrap;">TOPIC</button>
                 <button onclick="setMode('local')" id="tab-local"
-                    style="padding: 0.5rem 1rem; background: transparent; color: var(--secondary); border: 1px solid #333; border-radius: 8px; cursor: pointer; font-family: var(--font); font-weight: 600; transition: all 0.2s; flex: 1; min-width: 80px;">LOCAL MP</button>
+                    style="padding: 0.5rem 0.2rem; display: flex; justify-content: center; align-items: center; text-align: center; background: transparent; color: var(--secondary); border: 1px solid #333; border-radius: 8px; cursor: pointer; font-family: var(--font); font-weight: 600; transition: all 0.2s; flex: 1; min-width: 80px; white-space: nowrap;">LOCAL MP</button>
             </div>
 
             <div class="lang-tabs" style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
