@@ -641,6 +641,36 @@
                 transform: rotate(360deg);
             }
         }
+        .btn-home-small {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface);
+            border: 1px solid var(--surface-border);
+            border-radius: 12px;
+            color: var(--secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 100;
+        }
+        .btn-home-small:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--primary);
+            transform: scale(1.05);
+        }
+        @media (max-width: 600px) {
+            .btn-home-small {
+                top: 1rem;
+                left: 1rem;
+                width: 36px;
+                height: 36px;
+            }
+        }
     </style>
 </head>
 
@@ -737,6 +767,9 @@
 
         <!-- RPS Screen -->
         <div id="rps-screen" class="screen">
+            <button class="btn-home-small" onclick="confirmQuit()" title="Return to Menu">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            </button>
             <h1 style="color: var(--primary); font-size: 2rem; margin-bottom: 0.5rem;">Who Goes First?</h1>
             <p style="color: var(--secondary); margin-bottom: 2rem;">Rock, Paper, Scissors</p>
 
@@ -766,6 +799,9 @@
 
         <!-- Game Screen -->
         <div id="game-screen" class="screen">
+            <button class="btn-home-small" onclick="confirmQuit()" title="Quit Game">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            </button>
             <div class="header">
                 <div class="player-info">
                     <div class="name" id="game-player-name">YOU</div>
@@ -985,6 +1021,15 @@
 
         function showMenu() {
             switchScreen('menu');
+        }
+
+        function confirmQuit() {
+            if (confirm("Are you sure you want to quit and return to the home screen?")) {
+                clearInterval(timerInterval);
+                clearInterval(rpsTimerInterval);
+                clearTimeout(botTypingTimeout);
+                showMenu();
+            }
         }
 
         function setLanguage(lang) {
